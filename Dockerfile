@@ -4,14 +4,18 @@ WORKDIR /app
 
 # Install system deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpq-dev gcc && \
+    libpq-dev gcc git && \
     rm -rf /var/lib/apt/lists/*
+
+# Copy local common library (avoids dependency on GitHub repo for schema changes)
+COPY common/ /app/common/
 
 # Copy service code
 COPY services/auth/ /app/services/auth/
 
-# Install dependencies (common is pulled from GitHub via pip)
-RUN pip install --no-cache-dir -r /app/services/auth/requirements.txt
+# Install dependencies (common is now installed from local copy)
+RUN pip install --no-cache-dir -r /app/services/auth/requirements.txt && \
+    pip install -e /app/common
 
 ENV PYTHONPATH=/app
 
