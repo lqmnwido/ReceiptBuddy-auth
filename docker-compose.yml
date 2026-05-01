@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  auth:
+    build:
+      context: ../..
+      dockerfile: services/auth/Dockerfile
+    ports:
+      - "8001:8001"
+    env_file:
+      - ../../.env
+    networks:
+      - receiptbuddy-net
+    restart: unless-stopped
+
+networks:
+  receiptbuddy-net:
+    external: true
